@@ -1,5 +1,6 @@
 package io.github.solclient.webapi.v1;
 
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -31,9 +32,13 @@ public class OnlineController {
 	@GetMapping("/log_in/{uuid}")
 	public void logIn(@PathVariable UUID uuid) {
 		repository.findById(uuid).ifPresentOrElse((player) -> {
-			player.setCreation(ZonedDateTime.now());
+			player.setCreation(now());
 			repository.save(player);
-		}, () -> repository.save(new OnlinePlayer(uuid, ZonedDateTime.now())));
+		}, () -> repository.save(new OnlinePlayer(uuid, now())));
+	}
+
+	private static ZonedDateTime now() {
+		return ZonedDateTime.now(ZoneOffset.UTC);
 	}
 
 	@GetMapping("/log_out/{uuid}")
